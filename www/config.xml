@@ -6,10 +6,10 @@
         id        = "com.bluenod.example"
         version   = "1.0.0">
 
-    <name>gexf</name>
+    <name>gexfversion2</name>
 
     <description>
-        the example 1.0
+        the example 2.0
     </description>
 
     <author href="http://phonegap.com" email="support@phonegap.com">
