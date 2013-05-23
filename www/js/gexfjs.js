@@ -791,6 +791,8 @@ function setParams(paramlist) {
 
 $(document).ready(function() {
     
+    console.log('App loaded');
+    
     var lang = (
         typeof GexfJS.params.language != "undefined" && GexfJS.params.language
         ? GexfJS.params.language
