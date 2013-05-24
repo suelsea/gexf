@@ -213,6 +213,7 @@ function displayNode(_nodeIndex, _recentre) {
             var _e = GexfJS.graph.edgeList[i]
             if ( _e.target == _nodeIndex ) {
                 var _n = GexfJS.graph.nodeList[_e.source];
+                console.log('node found( as source of edge)');
                 _str += '<li><div class="smallpill" style="background: ' + _n.color.base +'"></div><a href="#" onmouseover="GexfJS.params.activeNode = ' + _e.source + '" onclick="displayNode(' + _e.source + ', true); return false;">' + _n.label + '</a>' + ( GexfJS.params.showEdgeWeight && _e.weight ? ' [' + _e.weight + ']' : '') + '</li>';
             }
         }
@@ -221,6 +222,7 @@ function displayNode(_nodeIndex, _recentre) {
             var _e = GexfJS.graph.edgeList[i]
             if ( _e.source == _nodeIndex ) {
                 var _n = GexfJS.graph.nodeList[_e.target];
+                console.log('node found( as target of edge)');
                 _str += '<li><div class="smallpill" style="background: ' + _n.color.base +'"></div><a href="#" onmouseover="GexfJS.params.activeNode = ' + _e.target + '" onclick="displayNode(' + _e.target + ', true); return false;">' + _n.label + '</a>' + ( GexfJS.params.showEdgeWeight && _e.weight ? ' [' + _e.weight + ']' : '') + '</li>';
             }
         }
@@ -249,10 +251,13 @@ function updateWorkspaceBounds() {
     GexfJS.graphZone.height = _elZC.height();
     GexfJS.areParamsIdentical = true;
     
+    
     for (var i in GexfJS.graphZone) {
         GexfJS.areParamsIdentical = GexfJS.areParamsIdentical && ( GexfJS.graphZone[i] == GexfJS.oldGraphZone[i] );
     }
     if (!GexfJS.areParamsIdentical) {
+        
+        console.log('modifier parameter carte');
     
     $("#carte")
         .attr({
@@ -271,6 +276,7 @@ function updateWorkspaceBounds() {
 
 function startMove(evt) {
     evt.preventDefault();
+    console.log('mouse starts moving');
     GexfJS.dragOn = true;
     GexfJS.lastMouse = {
         x : evt.pageX,
@@ -281,6 +287,7 @@ function startMove(evt) {
 
 function endMove(evt) {
     document.body.style.cursor = "default";
+    console.log('mouse ends moving');
     GexfJS.dragOn = false;
     GexfJS.mouseHasMoved = false;
 }
@@ -288,6 +295,7 @@ function endMove(evt) {
 function onGraphClick(evt) {
     if (!GexfJS.mouseHasMoved) {
         displayNode(GexfJS.params.activeNode);
+        console.log('nodes choosed');
     }
     endMove();
 }
@@ -311,7 +319,10 @@ function onGraphMove(evt) {
     GexfJS.mousePosition = {
         x : evt.pageX - $(this).offset().left,
         y : evt.pageY - $(this).offset().top
-    }
+    };
+    
+    console.log('position changed');
+    
     if (GexfJS.dragOn) {
         changeGraphPosition(evt,GexfJS.echelleGenerale);
         GexfJS.mouseHasMoved = true;
@@ -324,6 +335,7 @@ function onGraphMove(evt) {
 function onOverviewMove(evt) {
     if (GexfJS.dragOn) {
         changeGraphPosition(evt,-GexfJS.overviewScale);
+        console.log('overview changed');
     }
 }
 
@@ -333,6 +345,8 @@ function onGraphScroll(evt, delta) {
         if (GexfJS.totalScroll < 0) {
             if (GexfJS.params.zoomLevel > GexfJS.minZoom) {
                 GexfJS.params.zoomLevel--;
+                console.log('zoom --');
+                
                 var _el = $(this),
                     _off = $(this).offset(),
                     _deltaX = evt.pageX - _el.width() / 2 - _off.left,
@@ -344,6 +358,7 @@ function onGraphScroll(evt, delta) {
         } else {
             if (GexfJS.params.zoomLevel < GexfJS.maxZoom) {
                 GexfJS.params.zoomLevel++;
+                console.log('zoom ++');
                 GexfJS.echelleGenerale = Math.pow( Math.SQRT2, GexfJS.params.zoomLevel );
                 var _el = $(this),
                     _off = $(this).offset(),
@@ -362,6 +377,8 @@ function initializeMap() {
     clearInterval(GexfJS.timeRefresh);
     GexfJS.oldParams = {};
     GexfJS.ctxGraphe.clearRect(0, 0, GexfJS.graphZone.width, GexfJS.graphZone.height);
+    console.log('clearRect');
+    
     $("#zoomSlider").slider({
         orientation: "vertical",
         value: GexfJS.params.zoomLevel,
@@ -381,9 +398,15 @@ function initializeMap() {
         width : GexfJS.overviewWidth,
         height : GexfJS.overviewHeight
     });
+    
+    console.log('carte and overview set');
+    
     GexfJS.timeRefresh = setInterval(traceMap,60);
     GexfJS.graph = null;
+    
+    console.log('loadgraph begins');
     loadGraph();
+    console.log('loadgraph finishes');
 }
 
 function loadGraph() {
@@ -403,7 +426,7 @@ function loadGraph() {
                 nodeIndexById : [],
                 nodeIndexByLabel : [],
                 edgeList : []
-            }
+            };
             var _xmin = 1e9, _xmax = -1e9, _ymin = 1e9, _ymax = -1e9; _marge = 30;
             $(_nodes).each(function() {
                 var _n = $(this),
@@ -470,6 +493,7 @@ function loadGraph() {
                 GexfJS.ctxMini.closePath();
                 GexfJS.ctxMini.fill();
             });
+            console.log('parameters of nodes finish');
             
             $(_edges).each(function() {
                 var _e = $(this),
@@ -504,6 +528,7 @@ function loadGraph() {
                     color : "rgba(" + _r + "," + _g + "," + _b + ",.7)"
                 });
             });
+             console.log('parameters of edges finish');
             
             GexfJS.imageMini = GexfJS.ctxMini.getImageData(0, 0, GexfJS.overviewWidth, GexfJS.overviewHeight);
         
@@ -790,6 +815,8 @@ function setParams(paramlist) {
 }
 
 $(document).ready(function() {
+
+    console.log('ready, begin!');
     
     console.log('App loaded');
     
@@ -807,19 +834,29 @@ $(document).ready(function() {
         )
     );
     GexfJS.lang = (GexfJS.i18n[lang] ? lang : "en");
+    console.log('language ok');
     
     if ( !document.createElement('canvas').getContext ) {
         $("#bulle").html('<p><b>' + strLang("browserErr") + '</b></p>');
+        console.error('create canvas failed');
         return;
     }
     
     updateButtonStates();
+    console.log('button states update;');
+    
     
     GexfJS.ctxGraphe = document.getElementById('carte').getContext('2d');
+    console.log('carte prepared');    
+   
     GexfJS.ctxMini = document.getElementById('overview').getContext('2d');
+    console.log('overview prepared');
+    
     updateWorkspaceBounds();
+    console.log('workspace bound updated');
     
     initializeMap();
+    console.log('map initialized;');
     
     window.onhashchange = initializeMap;
     
@@ -871,6 +908,7 @@ $(document).ready(function() {
     $("#recherche").submit(function() {
         if (GexfJS.graph) {
             displayNode( GexfJS.graph.nodeIndexByLabel.indexOf($("#searchinput").val().toLowerCase()), true);
+            console.log('node found');
         }
         return false;
     });
@@ -892,12 +930,14 @@ $(document).ready(function() {
     $("#zoomMinusButton").click(function() {
         GexfJS.params.zoomLevel = Math.max( GexfJS.minZoom, GexfJS.params.zoomLevel - 1);
         $("#zoomSlider").slider("value",GexfJS.params.zoomLevel);
+        console.log('zoom minus');
         return false;
     })
         .attr("title", strLang("zoomOut"));
     $("#zoomPlusButton").click(function() {
         GexfJS.params.zoomLevel = Math.min( GexfJS.maxZoom, GexfJS.params.zoomLevel + 1);
         $("#zoomSlider").slider("value",GexfJS.params.zoomLevel);
+        console.log('zoom plus');
         return false;
     })
         .attr("title", strLang("zoomIn"));
@@ -915,6 +955,7 @@ $(document).ready(function() {
     });
     $("#edgesButton").click(function () {
         GexfJS.params.showEdges = !GexfJS.params.showEdges;
+        console.log('edge state changed');
         updateButtonStates();
         return false;
     });
