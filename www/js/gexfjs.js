@@ -405,7 +405,9 @@ function initializeMap() {
     GexfJS.graph = null;
     
     console.log('loadgraph begins');
+
     loadGraph();
+    
     console.log('loadgraph finishes');
 }
 
@@ -493,6 +495,7 @@ function loadGraph() {
                 GexfJS.ctxMini.closePath();
                 GexfJS.ctxMini.fill();
             });
+
             console.log('parameters of nodes finish');
             
             $(_edges).each(function() {
@@ -528,6 +531,7 @@ function loadGraph() {
                     color : "rgba(" + _r + "," + _g + "," + _b + ",.7)"
                 });
             });
+
              console.log('parameters of edges finish');
             
             GexfJS.imageMini = GexfJS.ctxMini.getImageData(0, 0, GexfJS.overviewWidth, GexfJS.overviewHeight);
